@@ -17,7 +17,7 @@
         ④ SELECT 조회할칼럼, 조회할칼럼, 조회할칼럼, ...
         ① FROM 테이블이름
         ② [WHERE 조건식]
-        ③ [GROUP BY 그룹화할칼럼 [HAVING 그룹조건식]]
+        ③ [GROUP BY 그룹화할칼럼 [HAVING 그룹조건식]
         ⑤ [ORDER BY 정렬할칼럼 정렬방식]                             
 */
 
@@ -28,9 +28,8 @@
     3. 모든 세부 작업이 성공하면 COMMIT하고, 하나라도 실패하면 모든 세부 작업의 취소를 진행한다
         (All or Nothing)
         예시를 들어보면 1년 로그인을 안 했을 때 휴먼처리
-        계정을 없애되 -> 휴먼처리 작업을 2개함
+        계정을 없애되 -> 휴먼처리 -> 2개의 작업을 수행
         .. 더 공부
-
 */
 
 -- 조회 실습
@@ -64,8 +63,7 @@ SELECT *    -- 불려 가기 싫으면 사용 금지!
 SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
   FROM EMP;  
   
--- 3. 동일한 데이터는 한 번만 조회하기
--- DISTINCT
+-- 3. 동일한 데이터는 한 번만 조회하기 [DISTINCT]
 SELECT DISTINCT JOB
   FROM EMP;
 
@@ -100,18 +98,18 @@ SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
 --    1) WILD CARD
 --      (1) % : 글자 수 제한 없는 모든 문자 (% 뒤에 오는 글자수 상관 x)
 --      (2) _ : 1글자로 제한된 모든 글자 (1글자만 올 수 있음)
---      A%      A_
-AI      AI
-APP     AP
-APPLE   AM
+--      >> A%      A(아무 글자~~ 몇개 있는지 상관없는~)
+--           AI      AI
+--           AP
+--           AM
 
 --    2) 연산자
 --      (1) LIKE     : WILD CARD를 포함한다.
 --      (2) NOT LIKE : WILD CARD를 포함하지 않는다.
 SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
   FROM EMP
- WHERE ENAME LIKE 'A%'; -- >>  = 라고 입력하면 안 됨!
- WHERE ENAME LIKE '%A'; -- A로 끝나는 건 상관없다
- WHERE ENAME LIKE '%A%'; -- A로 시작하든 A로 끝나든 상관없다4
+ WHERE ENAME LIKE 'A%';   -- >>  = 라고 입력하면 안 됨!
+ WHERE ENAME LIKE '%A';   -- A로 끝나는 건 상관없다
+ WHERE ENAME LIKE '%A%';  -- A로 시작하든 A로 끝나든 상관없다.
  
    
