@@ -43,7 +43,7 @@ CREATE TABLE PRODUCT(  -- 보기 좋게 한 줄에 하나씩, 띄어쓰기로 �
     CODE         VARCHAR2(2 BYTE)  NOT NULL UNIQUE,
     MODEL        VARCHAR2(10 BYTE),  -- NOT NULL이면 모델명 안 적어도 된다는 뜻
     CATEGORY     VARCHAR2(5 BYTE), CHECK(CATEGORY = 'MAIN' OR CATEGORY = 'SUB'),
-    -- [대체문법 학습★] CHECK(CATEGORY IN('MAIN, 'SUB')) 카테고리가 메인가 서브 중 하나다
+    -- [대체문법 학습★] CHECK(CATEGORY IN('MAIN', 'SUB')) 카테고리가 메인이나 서브 중 하나다
     PRICE        NUMBER,        CHECK(PRICE >= 0),
     AMOUNT       NUMBER(2),     CHECK(AMOUNT > 0 AND AMOUNT <= 100),
     -- [대체문법 학습*] CHECK(AMOUNT BETWEEN 0 AND 100)
