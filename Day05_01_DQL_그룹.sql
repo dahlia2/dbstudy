@@ -36,6 +36,17 @@ SELECT  -- SELECT 하는 대상은 GROUP BY에 꼭 명시되어 있어야 한다
       EMPLOYEES
  GROUP BY
       DEPARTMENT_ID;
+      
+-- 참고. GROUP BY 없이 집계함수 사용하기
+SELECT
+       DISTINCT DEPARTMENT_ID
+       ,COUNT(*) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별사원수
+     , SUM(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉합
+     , AVG(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉평균
+     , MAX(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉킹
+     , MIN(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉꽝
+  FROM
+       EMPLOYEES;
     
 /*
     조건 지정하기
@@ -44,17 +55,19 @@ SELECT  -- SELECT 하는 대상은 GROUP BY에 꼭 명시되어 있어야 한다
     3. GROUP BY 이후에만 처리할 수 있는 조건은 HAVING절이 처리한다.
 */
 
+
 -- 5. DEPARTMENT_ID가 NULL인 부서를 제외하고, 모든 부서의 부서별 사원 수를 조회하시오.
 --   해설) DEPARTMENT_ID가 NULL 부서의 제외는 GROUP BY 이전에 처리할 수 있으므로 WHERE절로 처리한다.
 SELECT
-     DEPARTMENT_ID
-    , COUNT(*) AS 부서별사원수
+       DEPARTMENT_ID
+       , COUNT(*) AS 부서별사원수
   FROM
-     EMPLOYEES
+       EMPLOYEES
  WHERE
-     DEPARTMENT_ID IS NOT NULL
+       DEPARTMENT_ID IS NOT NULL
  GROUP BY
-     DEPARTMENT_ID
+       DEPARTMENT_ID
+    
     
 -- 6. 부서별 인원 수가 5명 이하인 부서를 조회하시오
 --    해설) 부서별 인원 수는 GROUP BY 이후에 확인할 수 있으므로, HAVING절에서 조건을 처리한다.
@@ -67,19 +80,3 @@ GROUP BY
       DEPARTMENT_ID
 HAVING
       COUNT(*) <= 5;
-      
--- 참고. GROUP BY 없이 집계함수 사용학
-SELECT
-        DINSTINCT DEPARTMENT_ID
-      , COUNT(*) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별사원수
-      , SUM(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉합
-      , AVG(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉평균
-      , MAX(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉최고
-      , MIN(SALARY) OVER(PARTITION BY DEPARTMENT_ID) AS 부서별연봉최소
-      
-  FROM
-        EMPLOYEES;
-    
-    
-      
-      
