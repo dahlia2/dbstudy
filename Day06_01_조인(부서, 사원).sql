@@ -10,16 +10,18 @@
     3. 조인 성능 향상을 위해서 가급적 드라이브(DRIVE) 테이블을 먼저 작성한다. 드리븐(DRIVEN) 테이블은 나중에 작성한다.
 */
 
+DESC EMPLOYEES;  
+
 -- 1. 내부 조인(두 테이블에 일치하는 정보를 조인한다.)
 
 -- 1) 표준 문법
 SELECT E.EMP_NO, E.NAME, D.DEPT_NO, D.DEPT_NAME
-  FROM DEPARTMENT_TBL D INNER JOIN EMPLOYEE_TBL E
+  FROM DEPARTMENT_TBL D INNER JOIN EMPLOYEES_TBL E
     ON D.DEPT_NO = E.DEPART;
 
 -- 2) 오라클 문법
 SELECT E.EMP_NO, E.NAME, D.DEPT_NO, D.DEPT_NAME
-  FROM DEPARTMENT_TBL D, EMPLOYEE_TBL E
+  FROM DEPARTMENT_TBL D, EMPLOYEES_TBL E
  WHERE D.DEPT_NO = E.DEPART;
  
  
@@ -36,7 +38,6 @@ SELECT D.DEPT_NO, D.DEPT_NAME, E.EMP_NO, E.NAME
  WHERE D.DEPT_NO = E.DEPART(+);
  
   
- 
 -- 외래키 제약 조건의 비활성화(일시 중지)
 -- 제약조건이름 : FK_EMP_DEPT
 ALTER TABLE EMPLOYEE_TBL
