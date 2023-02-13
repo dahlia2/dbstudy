@@ -328,6 +328,10 @@ SELECT C.CUSTOMER_NAME AS 고객명
 -- 추신수  86000      2
 -- 박세리  0          0
 
+SELECT C.CUSTOMER_NAME AS 고객명
+FROM CUSTOMER_TBL C LEFT OUTER JOIN ORDER_TBL O
+  ON C.CUSTOMER_ID = O.CUSTOMER_ID LEFT OUTER JOIN
+
 
 -- 13. 가장 최근에 구매한 고객의 이름과 구매내역(책이름, 주문일자)을 조회하시오.
 -- 고객명  책이름            주문일자
@@ -338,6 +342,15 @@ SELECT C.CUSTOMER_NAME AS 고객명
 -- 가장 비싼 서적을 구매한 고객이 없다면 고객 이름은 NULL로 처리하시오.
 -- 고객명  책이름       책가격
 -- NULL    골프 바이블  35000
+
+SELECT C.CUSTOMER_NAME AS 고객명
+     , B.BOOK_NAME AS 책이름
+     , B.PRICE AS 책가격
+  FROM BOOK_TBL B LEFT OUTER JOIN ORDER_TBL O
+    ON B.BOOK_ID = O.BOOK_ID LEFT OUTER JOIN CUSTOMER_TBL C
+    ON C.CUSTOMER_ID = O.CUSTOMER_ID
+ WHERE B.PRICE = (SELECT MAX(PRICE)
+                    FROM BOOK_TBL);
 
 
 -- 15. 총구매액이 2~3위인 고객의 이름와 총구매액을 조회하시오.
