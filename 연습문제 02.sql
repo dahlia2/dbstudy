@@ -318,7 +318,7 @@ SELECT C.CUSTOMER_NAME AS 고객명
   GROUP BY C.CUSTOMER_ID, C.CUSTOMER_NAME;
        
 
--- 12. 모든 구매 고객의 이름과 총구매액(PRICE * AMOUNT)과 구매횟수를 조회하시오.
+-- 12. 모든 구매 고객의 이름과 총구매액(PRICE * AMOUNT)과 구매횟수를 조회하시오.  -- 고객 테이블 주문테이블  책 테이블 주문테이블 다 
 -- 구매 이력이 없는 고객은 총구매액과 구매횟수를 0으로 조회하시오. (고객은 모두 조회, 주문내역은 있는 자료만 조회 = 왼쪽 외부 조인)
 -- 고객번호순으로 오름차순 정렬하여 조회하시오.
 -- 고객명  총구매액  구매횟수
@@ -333,9 +333,18 @@ FROM CUSTOMER_TBL C LEFT OUTER JOIN ORDER_TBL O
   ON C.CUSTOMER_ID = O.CUSTOMER_ID LEFT OUTER JOIN
 
 
--- 13. 가장 최근에 구매한 고객의 이름과 구매내역(책이름, 주문일자)을 조회하시오.
+-- 13. 가장 최근에 구매한 고객의 이름과 구매내역(책이름, 주문일자)을 조회하시오.  >> 고객 테이블과 책 테이블과 주문 테이블의 3개 이너조인
 -- 고객명  책이름            주문일자
 -- 장미란  역도 단계별 기술  20/07/10
+
+SELECT C.CUSTOMER_NAME AS 고객명
+     , B.BOOK_NAME AS 책이름
+     , O.ORDER_DATE AS 주문일자
+  FROM CUSTOMER_TBL C INNER JOIN ORDER_DATE_TBL O
+    ON C.CUSTOMER_NAME = O.CUTOMER_NAME INNER JOIN BOOK_NAME_TBL B
+    ON B.BOOK_ID = O.BOOK_ID
+ WHERE O.ORDER_DATE = (SELECT MAX(ORDER_DATE) FROM ORDER_TBL); -- 가장 최근 날짜는 MAX
+ 
 
 
 -- 14. 모든 서적 중에서 가장 비싼 서적을 구매한 고객의 이름과 구매내역(책이름, 가격)을 조회하시오.
