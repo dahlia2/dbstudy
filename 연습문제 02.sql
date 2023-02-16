@@ -1,4 +1,4 @@
--- 1. 다음 설명을 읽고 적절한 테이블을 생성하되, 기본키/외래키는 별도로 설정하지 마시오.
+g-- 1. 다음 설명을 읽고 적절한 테이블을 생성하되, 기본키/외래키는 별도로 설정하지 마시오.
 
 DROP TABLE ORDER_TBL;
 DROP TABLE CUSTOMER_TBL;
@@ -318,7 +318,7 @@ SELECT C.CUSTOMER_NAME AS 고객명
   GROUP BY C.CUSTOMER_ID, C.CUSTOMER_NAME;
        
 
--- 12. 모든 구매 고객의 이름과 총구매액(PRICE * AMOUNT)과 구매횟수를 조회하시오.  -- 고객 테이블 주문테이블  책 테이블 주문테이블 다 
+-- 12. 모든 구매 고객의 이름과 총구매액(PRICE * AMOUNT)과 구매횟수를 조회하시오.  -- 고객 테이블 주문테이블 책 테이블 주문테이블 다 
 -- 구매 이력이 없는 고객은 총구매액과 구매횟수를 0으로 조회하시오. (고객은 모두 조회, 주문내역은 있는 자료만 조회 = 왼쪽 외부 조인)
 -- 고객번호순으로 오름차순 정렬하여 조회하시오.
 -- 고객명  총구매액  구매횟수
@@ -329,8 +329,13 @@ SELECT C.CUSTOMER_NAME AS 고객명
 -- 박세리  0          0
 
 SELECT C.CUSTOMER_NAME AS 고객명
-FROM CUSTOMER_TBL C LEFT OUTER JOIN ORDER_TBL O
-  ON C.CUSTOMER_ID = O.CUSTOMER_ID LEFT OUTER JOIN
+     , NVL(SUM(B.PRICE * O.AMOUNT), 0) AS 총구매액  -- 각 총 구매한 모든 책을 조회하는 거니까 SUM을 앞에 붙여주고, NVL을 통해 NULL값이 나온다면 0으로 처리
+     , COUNT(O.ORDER_ID) AS 구매횟수 -- 구매내역에 고객 아디가 몇 개 있는지
+  FROM CUSTOMER_TBL C LEFT OUTER JOIN ORDER_TBL O -- 고객이 없는 주문 내역이니까 레프트 아웃조인
+    ON C.CUSTOMER_ID = O.CUSTOMER_ID LEFT OUTER JOIN BOOK_TBL B  -- 고객이 책을 주문하지 않았으니까 이것 또한 LEFT( C.CUSTOMER_ID = O.CUSTOMER_ID ) OUT JOIN
+    ON B.BOOK_ID = O.BOOK_ID
+ GROUP BY C.CUSTOMER_ID, C.CUSTOMER_NAME
+ ORDER BY C.CUSTOMER_ID ASC; -- 고객번호순으로 오름차순
 
 
 -- 13. 가장 최근에 구매한 고객의 이름과 구매내역(책이름, 주문일자)을 조회하시오.  >> 고객 테이블과 책 테이블과 주문 테이블의 3개 이너조인
@@ -344,8 +349,8 @@ SELECT C.CUSTOMER_NAME AS 고객명
     ON C.CUSTOMER_NAME = O.CUTOMER_NAME INNER JOIN BOOK_NAME_TBL B
     ON B.BOOK_ID = O.BOOK_ID
  WHERE O.ORDER_DATE = (SELECT MAX(ORDER_DATE) FROM ORDER_TBL); -- 가장 최근 날짜는 MAX
- 
 
+-- ========================================================
 
 -- 14. 모든 서적 중에서 가장 비싼 서적을 구매한 고객의 이름과 구매내역(책이름, 가격)을 조회하시오.
 -- 가장 비싼 서적을 구매한 고객이 없다면 고객 이름은 NULL로 처리하시오.
