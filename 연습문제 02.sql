@@ -350,10 +350,10 @@ SELECT C.CUSTOMER_NAME AS 고객명
     ON B.BOOK_ID = O.BOOK_ID
  WHERE O.ORDER_DATE = (SELECT MAX(ORDER_DATE) FROM ORDER_TBL); -- 가장 최근 날짜는 MAX
 
--- ========================================================
 
 -- 14. 모든 서적 중에서 가장 비싼 서적을 구매한 고객의 이름과 구매내역(책이름, 가격)을 조회하시오.
 -- 가장 비싼 서적을 구매한 고객이 없다면 고객 이름은 NULL로 처리하시오.
+ -- ㄴ 책이 없는 주문이니까 레프트아웃조인테이블 , 책과 주문이 없는 손님이니까 또 레프트아웃조인테이블
 -- 고객명  책이름       책가격
 -- NULL    골프 바이블  35000
 
@@ -366,8 +366,37 @@ SELECT C.CUSTOMER_NAME AS 고객명
  WHERE B.PRICE = (SELECT MAX(PRICE)
                     FROM BOOK_TBL);
 
+-- ==================== INDEX 공부 더 하고 ROWNUM, ROWNUMBER 문제 풀기
 
 -- 15. 총구매액이 2~3위인 고객의 이름와 총구매액을 조회하시오.
 -- 고객명  총구매액
 -- 추신수  86000
 -- 장미란  62000
+
+-- 1) ROWNUM 칼럼
+SELECT BB.고객명
+     , BB.총구매액
+  FROM (SELECT ROWNUM AS ROW_NUM -- 6) ROWNUM을 ROW_NUM이라 칭함
+             , AA.고객명  -- 7) AA 테이블의 고객이름칼럼을 뽑음
+             , AA.총구매액  -- 8) AA 테이블의 총구매액칼럼을 뽑음
+          FROM (SELECT C.CUSTOMER_NAME AS 고객명 -- 3) 고객NAME 컬럼을 고객명이라 칭함
+                     , SUM(B.PRICE * O.AMOUNT) AS 총구매액 -- 4) 책 가격과 갯수를 곱해서 각 테이블값을 더해야 하니 SUM처리 한 후 총구매액이라 칭함
+                  FROM CUSTOMER_TBL C INNER JOIN ORDER_TBL O -- 1) 고객과 주문테이블의 이너조인
+                    ON C.CUSTOMER_ID = O.CUSTOMER_ID INNER JOIN BOOK_TBL B -- 2) 
+                    ON B.BOOK_ID = O.BOOK_ID -- 2) 고객주문교집합과 책의 이너조인 과정
+                 GROUP BY C.CUSTOMER_ID, C.CUSTOMER_NAME -- ) 고객의 번호와 이름을 그룹화
+                 ORDER BY 총구매액 DESC) AA;) BB   -- 5) 고객의 총구매액을 내림차순(크기가 큰 순부터)으로 정렬한 테이블을 AA라고 칭함   
+                                                                 -- AA테이블의 고객이름, 총구매액칼럼값만 뽑은 걸 BB라고 칭함
+ WHERE BB.ROW_NUM BETWEEN 2 AND 3;
+
+-- 2) ROW_NUMBER() 함수
+SELECT A.고객명
+     , A.총구매액
+  FROM (SELECT ROW_NUMBER() OVER(ORDER BY SUM(B.PRICE * O.AMOUNT) DESC) AS ROW_NUM
+             , CUSTOMER_NAME AS 고객명
+             , SUM(B.PRICE * O.AMOUNT) AS 총구매액
+          FROM CUSTOMER_TBL C INNER JOIN ORDER_TBL O
+            ON C.CUSTOMER_ID = O.CUSTOMER_ID INNER JOIN BOOK_TBL B
+            ON B.BOOK_ID = O.BOOK_ID
+         GROUP BY C.CUSTOMER_ID, C.CUSTOMER_NAME) A
+ WHERE A.ROW_NUM BETWEEN 2 AND 3;
