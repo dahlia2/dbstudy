@@ -104,13 +104,11 @@ COMMIT;
 
 
 -- 1. 제품 테이블에서 제품명이 '책'인 제품의 카테고리를 '서적'으로 수정하시오.
-
 UPDATE PRODUCTS
    SET PROD_CATEGORY ='서적'
  WHERE PROD_NAME = '책';
 
 -- 2. 연락처1이 '011'인 사용자의 연락처1을 모두 '010'으로 수정하시오.
-
 UPDATE USERS
    SET USER_MOBILE1 = '010'
  WHERE USER_MOBILE1 = '011';
@@ -189,7 +187,7 @@ SELECT U.USER_ID AS 아이디
      , COUNT(B.BUY_NO) AS 구매횟수
   FROM USERS U INNER JOIN BUYS B
     ON U.USER_ID = B.USER_ID
- GROUP BY U.USER_ID, U.USER_NAME
+ GROUP BY U.USER_ID, U.USER_NAME;
  ORDER BY U.USER_ID;
 
 
@@ -200,7 +198,13 @@ SELECT U.USER_ID AS 아이디
 -- 김용만  모니터  200
 -- 박수홍  메모리  800
 -- 박수홍  모니터  1000
-
+SELECT U.USER_NAME AS 고객명
+     , P.PROD_NAME AS 제품명
+     , P.PROD_PRICE * B.BUY_AMOUNT AS 구매액
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID INNER JOIN PRODUCTS P
+    ON B.PROD_CODE = P.PROD_CODE
+ WHERE P.PROD_CATEGORY = '전자';
 
 
 -- 10. 구매횟수가 2회 이상인 고객명과 구매횟수를 조회하시오.
@@ -208,7 +212,20 @@ SELECT U.USER_ID AS 아이디
 -- 박수홍  3
 -- 이휘재  2
 -- 강호동  3
+SELECT U.USER_NAME AS 고객명
+     , B.BUY_AMOUNT AS 구매횟수
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ WHERE B.BUY_AMOUNT > 1;
 
+-- 답안
+SELECT U.USER_NAME AS 고객명
+     , B.BUY_AMOUNT AS 구매횟수
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ GROUP BY U.USER_ID, U.USER_NAME
+ HAVING COUNT(*) >= 2;
+    
 
 
 -- 11. 모든 제품의 제품명과 판매횟수를 조회하시오.
@@ -221,7 +238,17 @@ SELECT U.USER_ID AS 아이디
 -- 모니터  2
 -- 청바지  2
 -- 노트북  1
-
+SELECT P.PROD_NAME AS 제품명
+     , NVL(B.BUY_AMOUNT, 0) AS 판매횟수
+  FROM PRODUCTS P LEFT OUTER JOIN BUYS B
+    ON P.PROD_CODE = B.PROD_CODE;
+    
+-- 답안
+SELECT P.PROD_NAME AS 제품명
+     , COUNT(B.BUY_NO) AS 판매횟수
+  FROM PRODUCTS P LEFT OUTER JOIN BUYS B
+    ON P.PROD_CODE = B.PROD_CODE
+ GROUP BY P.PROD_CODE, P.PROD_NAME;
 
 
 -- 12. 어떤 고객이 어떤 제품을 구매했는지 조회하시오.
