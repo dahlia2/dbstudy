@@ -1,4 +1,5 @@
 ----- [ 테이블 생성 ]
+
 CREATE TABLE PRODUCT_TBL (
     PROD_NO NUMBER NOT NULL,
     PROD_NAME VARCHAR2(10 BYTE),
@@ -209,7 +210,70 @@ SELECT
        DEPARTMENT_ID
 HAVING
        COUNT(*) <= 5;
+       
 
+
+-- EMPLOYEES 테이블에서 DEPARTMENT_ID가 80인 사원들을 높은 SALARY순으로 조회하시오.
+-- SALARY는 9,000처럼 천 단위 구분기호를 표기해서 조회하시오.
+SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID
+     , TO_CHAR(SALARY, '99,999') AS SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID = 80
+ ORDER BY SALARY DESC;
+
+
+
+
+-- EMPLOYEES 테이블에서 PHONE_NUMBER에 따른 지역(REGION)을 조회하시오.
+-- PHONE_NUMBER가 011로 시작하면 'MOBILE', 515로 시작하면 'EAST', 590으로 시작하면 'WEST', 603으로 시작하면 'SOUTH', 650으로 시작하면 'NORTH'로 조회하시오.
+SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE
+     , JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+     , DECODE(SUBSTR(PHONE_NUMBER, 1, 3)
+     , '011', 'MOBILE'
+     , '515', 'EAST'
+     , '590', 'WEST'
+     , '603', 'SOUTH'
+     , '650', 'NORTH') AS REGION
+FROM EMPLOYEES;
+
+
+-- EMPLOYEES 테이블에서 근무 개월 수가 240개월 이상이면 '퇴직금정산대상', 아니면 빈 문자열('')을 조회하시오.
+SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT
+     , MANAGER_ID, DEPARTMENT_ID
+     , FLOOR(MONTHS_BETWEEN(SYSDATE, HIRE_DATE)) AS 근무개월수
+     , CASE
+         WHEN MONTHS_BETWEEN(SYSDATE, HIRE_DATE) >= 240 THEN '정산대상'
+         ELSE '해당 NO'
+       END AS 퇴직금정산대상유무
+  FROM EMPLOYEES;
+  
+  
+  
+  
+-- '영업부'의 가장 높은 급여보다 더 높은 급여를 받는 사원을 조회하시오.
+SELECT 사원정보
+  FROM 사원
+ WHERE 급여 > ('영업부'의 최대 급여);
+
+SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+  FROM EMPLOYEE_TBL
+ WHERE SALARY; > (SELECT MAX(SALARY)
+                   FROM EMPLOYEE_TBL
+                  WHERE DEPART); IN (SELECT DEPT_NO
+                                     FROM DEPARTMENT_TBL
+                                    WHERE DEPT_NAME = '영업부'));
+
+
+
+-- 참고. 서브쿼리를 조인으로 풀기
+SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+  FROM EMPLOYEE_TBL
+ WHERE SALARY > (SELECT MAX(E.SALARY)
+                   FROM DEPARTMENT_TBL D INNER JOIN EMPLOYEE_TBL E
+                     ON D.DEPT_NO = E.DEPART
+                  WHERE D.DEPT_NAME = '영업부');
+  
+  
 
 
 
