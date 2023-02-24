@@ -19,7 +19,7 @@ END;
 SELECT GET_NAME(1001) AS 사원명
   FROM EMPLOYEE_TBL
   WHERE EMP_NO = 1001;
-                                                                                                                                                                                                                                      
+  
 SELECT DISTINCT GET_NAME(1001) AS 사원명
   FROM EMPLOYEE_TBL;
   

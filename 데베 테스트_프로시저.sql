@@ -1,0 +1,22 @@
+-- 전달된 부서번호의 부서를 삭제하는 프로시저를 작성하시오.
+-- 전달된 부서에 근무하는 모든 사원을 함께 삭제하시오.
+CREATE OR REPLACE PROCEDURE DELETE_PROC(DEPTNO IN DEPARTMENT_TBL.DEPT_NO%TYPE) -- IN을 넣음으로서 사용자함수 파라미터와 똑같아짐
+IS   -- 변수가 필요하면 IS 밑으로 추가로 선언
+BEGIN
+    DELETE
+      FROM EMPLOYEE_TBL
+     WHERE DEPART = DEPTNO;
+    DELETE
+      FROM DEPARTMENT_TBL
+     WHERE DEPT_NO = DEPTNO;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLCODE);
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK; 
+END;
+
+EXECUTE DELETE_PROC(1);
+
+-- DELETE를 3개 하는 것
