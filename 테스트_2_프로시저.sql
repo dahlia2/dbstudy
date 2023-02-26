@@ -19,4 +19,4 @@ END;
 
 EXECUTE DELETE_PROC(1);
 
--- DELETE를 3개 하는 것
+-- 시험 문제엔 DELETE를 3개 하는 걸로 나옴
